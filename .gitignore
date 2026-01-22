@@ -1,0 +1,32 @@
+# Create .gitignore file
+touch .gitignore
+```
+
+Open `.gitignore` in a text editor and add common exclusions (adjust based on your tech stack):
+```
+# Dependencies
+node_modules/
+vendor/
+
+# Environment files
+.env
+.env.local
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Build files
+dist/
+build/
+*.log
+
+# Database files
+*.sqlite
+*.db
