@@ -30,7 +30,7 @@
                                 <div class="col-md-6">
                                     <label for="startDate" class="form-label">Start Date</label>
                                     <input type="date" class="form-control" id="startDate" name="startDate"
-                                           th:value="${#temporals.format(#temporals.createDate(#dates.year(#dates.createNow()), 1, 1), 'yyyy-MM-dd')}">
+                                           th:value="${#temporals.format(T(java.time.LocalDate).of(#temporals.year(#temporals.createToday()), 1, 1), 'yyyy-MM-dd')}">
                                 </div>
                                 <div class="col-md-6">
                                     <label for="endDate" class="form-label">End Date</label>

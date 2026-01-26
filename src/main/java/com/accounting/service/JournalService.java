@@ -33,6 +33,10 @@ public class JournalService {
         return journalEntryRepository.findAll(pageable);
     }
 
+    public Page<JournalEntry> findAllWithLines(Pageable pageable) {
+        return journalEntryRepository.findAllWithLines(pageable);
+    }
+
     public Optional<JournalEntry> findById(Long id) {
         return journalEntryRepository.findById(id);
     }

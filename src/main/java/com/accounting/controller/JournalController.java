@@ -34,7 +34,7 @@ public class JournalController {
                               @RequestParam(defaultValue = "20") int size,
                               @RequestParam(required = false) String status,
                               Model model) {
-        Page<JournalEntry> entries = journalService.findAll(
+        Page<JournalEntry> entries = journalService.findAllWithLines(
                 PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "entryDate", "entryNumber")));
 
         model.addAttribute("entries", entries);

@@ -51,10 +51,15 @@ function initTooltips() {
  * Form validation enhancements
  */
 function initFormValidations() {
-    // Prevent double form submission
-    $('form').on('submit', function(e) {
+    // Prevent double form submission - but only for non-journal forms
+    $('form:not(#journalForm)').on('submit', function(e) {
         var $form = $(this);
         var $submitBtn = $form.find('button[type="submit"]');
+
+        // Skip inline forms (action buttons)
+        if ($form.css('display') === 'inline' || $form.attr('style')?.includes('inline')) {
+            return true;
+        }
 
         if ($form.data('submitted') === true) {
             e.preventDefault();
@@ -63,7 +68,19 @@ function initFormValidations() {
 
         $form.data('submitted', true);
         $submitBtn.prop('disabled', true);
+
+        // Store original HTML to restore if needed
+        $submitBtn.data('original-html', $submitBtn.html());
         $submitBtn.html('<span class="spinner-border spinner-border-sm me-1" role="status"></span>Processing...');
+
+        // Re-enable after 5 seconds in case of error
+        setTimeout(function() {
+            $form.data('submitted', false);
+            $submitBtn.prop('disabled', false);
+            if ($submitBtn.data('original-html')) {
+                $submitBtn.html($submitBtn.data('original-html'));
+            }
+        }, 5000);
     });
 
     // Confirm delete actions

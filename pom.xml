@@ -12,9 +12,9 @@
     </parent>
 
     <groupId>com.accounting</groupId>
-    <artifactId>accounting-system</artifactId>
+    <artifactId>accounting-system-claude</artifactId>
     <version>1.0.0-SNAPSHOT</version>
-    <name>Double Entry Accounting System</name>
+    <name>Double Entry Accounting System (Claude)</name>
     <description>Web-based double-entry accounting system for small businesses</description>
 
     <properties>

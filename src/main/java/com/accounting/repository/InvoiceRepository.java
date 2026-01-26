@@ -32,7 +32,7 @@ public interface InvoiceRepository extends JpaRepository<Invoice, Long> {
     @Query("SELECT COALESCE(SUM(i.totalAmount), 0) FROM Invoice i WHERE i.status = :status")
     BigDecimal sumTotalByStatus(@Param("status") InvoiceStatus status);
 
-    @Query("SELECT MAX(CAST(SUBSTRING(i.invoiceNumber, 5) AS int)) FROM Invoice i WHERE i.invoiceNumber LIKE :prefix%")
+    @Query("SELECT MAX(CAST(SUBSTRING(i.invoiceNumber, LENGTH(:prefix) + 2) AS int)) FROM Invoice i WHERE i.invoiceNumber LIKE CONCAT(:prefix, '-%')")
     Integer findMaxInvoiceNumberByPrefix(@Param("prefix") String prefix);
 
     @Query("SELECT i FROM Invoice i LEFT JOIN FETCH i.items WHERE i.id = :id")

@@ -14,14 +14,14 @@ import java.util.List;
 public interface JournalEntryLineRepository extends JpaRepository<JournalEntryLine, Long> {
 
     @Query("SELECT jl FROM JournalEntryLine jl " +
-           "JOIN jl.journalEntry je " +
+           "JOIN FETCH jl.journalEntry je " +
            "WHERE jl.account.id = :accountId " +
            "AND je.status = 'POSTED' " +
            "ORDER BY je.entryDate, je.entryNumber")
     List<JournalEntryLine> findByAccountIdAndPosted(@Param("accountId") Long accountId);
 
     @Query("SELECT jl FROM JournalEntryLine jl " +
-           "JOIN jl.journalEntry je " +
+           "JOIN FETCH jl.journalEntry je " +
            "WHERE jl.account.id = :accountId " +
            "AND je.status = 'POSTED' " +
            "AND je.entryDate BETWEEN :startDate AND :endDate " +

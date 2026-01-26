@@ -25,7 +25,7 @@ public class BankReconciliationService {
     private final JournalEntryLineRepository journalEntryLineRepository;
 
     public List<BankAccount> findAllBankAccounts() {
-        return bankAccountRepository.findAll();
+        return bankAccountRepository.findAllWithRelations();
     }
 
     public List<BankAccount> findActiveBankAccounts() {
@@ -33,7 +33,7 @@ public class BankReconciliationService {
     }
 
     public Optional<BankAccount> findBankAccountById(Long id) {
-        return bankAccountRepository.findById(id);
+        return bankAccountRepository.findByIdWithRelations(id);
     }
 
     @Transactional
@@ -101,7 +101,9 @@ public class BankReconciliationService {
 
     private void updateBankAccountBalance(BankAccount bankAccount) {
         BigDecimal reconciledBalance = bankStatementRepository.getReconciledBalance(bankAccount.getId());
-        bankAccount.setCurrentBalance(bankAccount.getOpeningBalance().add(reconciledBalance));
+        if (reconciledBalance == null) reconciledBalance = BigDecimal.ZERO;
+        BigDecimal openingBalance = bankAccount.getOpeningBalance() != null ? bankAccount.getOpeningBalance() : BigDecimal.ZERO;
+        bankAccount.setCurrentBalance(openingBalance.add(reconciledBalance));
         bankAccountRepository.save(bankAccount);
     }
 
@@ -110,7 +112,9 @@ public class BankReconciliationService {
                 .orElseThrow(() -> new AccountingException("Bank account not found: " + bankAccountId));
 
         BigDecimal reconciledBalance = bankStatementRepository.getReconciledBalance(bankAccountId);
-        return bankAccount.getOpeningBalance().add(reconciledBalance);
+        if (reconciledBalance == null) reconciledBalance = BigDecimal.ZERO;
+        BigDecimal openingBalance = bankAccount.getOpeningBalance() != null ? bankAccount.getOpeningBalance() : BigDecimal.ZERO;
+        return openingBalance.add(reconciledBalance);
     }
 
     public BigDecimal getUnreconciledDifference(Long bankAccountId) {
@@ -126,7 +130,9 @@ public class BankReconciliationService {
                 .findByAccountIdAndPosted(bankAccount.getGlAccount().getId());
 
         for (JournalEntryLine line : lines) {
-            glBalance = glBalance.add(line.getDebitAmount()).subtract(line.getCreditAmount());
+            BigDecimal debit = line.getDebitAmount() != null ? line.getDebitAmount() : BigDecimal.ZERO;
+            BigDecimal credit = line.getCreditAmount() != null ? line.getCreditAmount() : BigDecimal.ZERO;
+            glBalance = glBalance.add(debit).subtract(credit);
         }
 
         BigDecimal reconciledBalance = getReconciledBalance(bankAccountId);

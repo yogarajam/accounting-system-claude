@@ -89,6 +89,10 @@ public class AccountService {
         BigDecimal totalDebit = journalEntryLineRepository.sumDebitByAccountId(accountId);
         BigDecimal totalCredit = journalEntryLineRepository.sumCreditByAccountId(accountId);
 
+        // Handle null values from aggregate queries
+        if (totalDebit == null) totalDebit = BigDecimal.ZERO;
+        if (totalCredit == null) totalCredit = BigDecimal.ZERO;
+
         Account account = accountRepository.findById(accountId)
                 .orElseThrow(() -> new AccountingException("Account not found: " + accountId));
 
@@ -106,6 +110,10 @@ public class AccountService {
         BigDecimal totalCredit = journalEntryLineRepository.sumCreditByAccountIdBetweenDates(
                 accountId, startOfTime, asOfDate);
 
+        // Handle null values from aggregate queries
+        if (totalDebit == null) totalDebit = BigDecimal.ZERO;
+        if (totalCredit == null) totalCredit = BigDecimal.ZERO;
+
         Account account = accountRepository.findById(accountId)
                 .orElseThrow(() -> new AccountingException("Account not found: " + accountId));
 
@@ -121,6 +129,10 @@ public class AccountService {
                 accountId, startDate, endDate);
         BigDecimal totalCredit = journalEntryLineRepository.sumCreditByAccountIdBetweenDates(
                 accountId, startDate, endDate);
+
+        // Handle null values from aggregate queries
+        if (totalDebit == null) totalDebit = BigDecimal.ZERO;
+        if (totalCredit == null) totalCredit = BigDecimal.ZERO;
 
         Account account = accountRepository.findById(accountId)
                 .orElseThrow(() -> new AccountingException("Account not found: " + accountId));

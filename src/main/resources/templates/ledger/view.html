@@ -71,7 +71,7 @@
                         <tr th:each="entry : ${ledger.entries}">
                             <td th:text="${#temporals.format(entry.date, 'yyyy-MM-dd')}">2024-01-01</td>
                             <td>
-                                <a th:href="@{/journal/view/{id}(id=0)}" th:text="${entry.entryNumber}">JE-001</a>
+                                <a th:href="@{/journal/view/{id}(id=${entry.journalEntryId})}" th:text="${entry.entryNumber}">JE-001</a>
                             </td>
                             <td th:text="${entry.description}">Description</td>
                             <td th:text="${entry.reference}">Reference</td>

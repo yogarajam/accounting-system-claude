@@ -80,3 +80,17 @@ MERGE INTO fiscal_years (id, name, start_date, end_date, is_closed) KEY(name) VA
     (1, 'FY 2024', '2024-01-01', '2024-12-31', false),
     (2, 'FY 2025', '2025-01-01', '2025-12-31', false),
     (3, 'FY 2026', '2026-01-01', '2026-12-31', false);
+
+-- Reset auto-increment sequences to start after existing data
+ALTER TABLE accounts ALTER COLUMN id RESTART WITH 100;
+ALTER TABLE roles ALTER COLUMN id RESTART WITH 10;
+ALTER TABLE users ALTER COLUMN id RESTART WITH 10;
+ALTER TABLE currencies ALTER COLUMN id RESTART WITH 10;
+ALTER TABLE fiscal_years ALTER COLUMN id RESTART WITH 10;
+ALTER TABLE customers ALTER COLUMN id RESTART WITH 100;
+ALTER TABLE invoices ALTER COLUMN id RESTART WITH 100;
+ALTER TABLE invoice_items ALTER COLUMN id RESTART WITH 100;
+ALTER TABLE journal_entries ALTER COLUMN id RESTART WITH 100;
+ALTER TABLE journal_entry_lines ALTER COLUMN id RESTART WITH 100;
+ALTER TABLE bank_accounts ALTER COLUMN id RESTART WITH 100;
+ALTER TABLE bank_statements ALTER COLUMN id RESTART WITH 100;

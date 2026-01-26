@@ -30,7 +30,7 @@ public interface JournalEntryRepository extends JpaRepository<JournalEntry, Long
     @Query("SELECT j FROM JournalEntry j WHERE j.status = 'POSTED' AND j.entryDate BETWEEN :startDate AND :endDate ORDER BY j.entryDate, j.entryNumber")
     List<JournalEntry> findPostedEntriesBetweenDates(@Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
 
-    @Query("SELECT MAX(CAST(SUBSTRING(j.entryNumber, 4) AS int)) FROM JournalEntry j WHERE j.entryNumber LIKE :prefix%")
+    @Query("SELECT MAX(CAST(SUBSTRING(j.entryNumber, LENGTH(:prefix) + 2) AS int)) FROM JournalEntry j WHERE j.entryNumber LIKE CONCAT(:prefix, '-%')")
     Integer findMaxEntryNumberByPrefix(@Param("prefix") String prefix);
 
     @Query("SELECT j FROM JournalEntry j LEFT JOIN FETCH j.lines WHERE j.id = :id")
@@ -38,4 +38,11 @@ public interface JournalEntryRepository extends JpaRepository<JournalEntry, Long
 
     @Query("SELECT COUNT(j) FROM JournalEntry j WHERE j.status = :status")
     Long countByStatus(@Param("status") EntryStatus status);
+
+    @Query("SELECT DISTINCT j FROM JournalEntry j LEFT JOIN FETCH j.lines")
+    List<JournalEntry> findAllWithLines();
+
+    @Query(value = "SELECT DISTINCT j FROM JournalEntry j LEFT JOIN FETCH j.lines",
+           countQuery = "SELECT COUNT(j) FROM JournalEntry j")
+    Page<JournalEntry> findAllWithLines(Pageable pageable);
 }

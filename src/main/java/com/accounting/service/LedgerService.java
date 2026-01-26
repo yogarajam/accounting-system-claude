@@ -35,6 +35,10 @@ public class LedgerService {
         BigDecimal openingDebit = journalEntryLineRepository.sumDebitByAccountIdBeforeDate(accountId, startDate);
         BigDecimal openingCredit = journalEntryLineRepository.sumCreditByAccountIdBeforeDate(accountId, startDate);
 
+        // Handle null values from aggregate queries
+        if (openingDebit == null) openingDebit = BigDecimal.ZERO;
+        if (openingCredit == null) openingCredit = BigDecimal.ZERO;
+
         BigDecimal openingBalance;
         if (account.isDebitNormal()) {
             openingBalance = openingDebit.subtract(openingCredit);
@@ -58,13 +62,16 @@ public class LedgerService {
                     ? line.getDescription()
                     : line.getJournalEntry().getDescription());
             entry.setReference(line.getJournalEntry().getReference());
-            entry.setDebitAmount(line.getDebitAmount());
-            entry.setCreditAmount(line.getCreditAmount());
+            BigDecimal debitAmount = line.getDebitAmount() != null ? line.getDebitAmount() : BigDecimal.ZERO;
+            BigDecimal creditAmount = line.getCreditAmount() != null ? line.getCreditAmount() : BigDecimal.ZERO;
+
+            entry.setDebitAmount(debitAmount);
+            entry.setCreditAmount(creditAmount);
 
             if (account.isDebitNormal()) {
-                runningBalance = runningBalance.add(line.getDebitAmount()).subtract(line.getCreditAmount());
+                runningBalance = runningBalance.add(debitAmount).subtract(creditAmount);
             } else {
-                runningBalance = runningBalance.add(line.getCreditAmount()).subtract(line.getDebitAmount());
+                runningBalance = runningBalance.add(creditAmount).subtract(debitAmount);
             }
             entry.setRunningBalance(runningBalance);
 

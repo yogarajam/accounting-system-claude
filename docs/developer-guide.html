@@ -1,0 +1,1667 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Developer Guide - Double Entry Accounting System</title>
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --secondary-color: #1e40af;
+            --bg-color: #f8fafc;
+            --code-bg: #1e293b;
+            --border-color: #e2e8f0;
+            --text-color: #334155;
+            --heading-color: #0f172a;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            line-height: 1.7;
+            color: var(--text-color);
+            background: var(--bg-color);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 60px 20px;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        nav.toc {
+            background: white;
+            border-radius: 8px;
+            padding: 30px;
+            margin: 30px 0;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        nav.toc h2 {
+            color: var(--heading-color);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--primary-color);
+        }
+
+        nav.toc ol {
+            counter-reset: section;
+            list-style: none;
+        }
+
+        nav.toc > ol > li {
+            margin: 10px 0;
+        }
+
+        nav.toc a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        nav.toc a:hover {
+            text-decoration: underline;
+        }
+
+        nav.toc ol ol {
+            margin-left: 25px;
+            margin-top: 8px;
+        }
+
+        nav.toc ol ol li {
+            margin: 5px 0;
+            font-size: 0.95rem;
+        }
+
+        section {
+            background: white;
+            border-radius: 8px;
+            padding: 40px;
+            margin: 30px 0;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        h2 {
+            color: var(--heading-color);
+            font-size: 1.8rem;
+            margin-bottom: 25px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid var(--primary-color);
+        }
+
+        h3 {
+            color: var(--heading-color);
+            font-size: 1.4rem;
+            margin: 30px 0 15px 0;
+        }
+
+        h4 {
+            color: var(--heading-color);
+            font-size: 1.1rem;
+            margin: 20px 0 10px 0;
+        }
+
+        p {
+            margin: 15px 0;
+        }
+
+        pre {
+            background: var(--code-bg);
+            color: #e2e8f0;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 20px 0;
+            font-family: 'Fira Code', 'Monaco', 'Consolas', monospace;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        code {
+            background: #e2e8f0;
+            color: #be185d;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-family: 'Fira Code', 'Monaco', 'Consolas', monospace;
+            font-size: 0.9em;
+        }
+
+        pre code {
+            background: transparent;
+            color: inherit;
+            padding: 0;
+        }
+
+        .keyword { color: #c792ea; }
+        .string { color: #c3e88d; }
+        .comment { color: #676e95; }
+        .annotation { color: #ffcb6b; }
+        .class-name { color: #82aaff; }
+        .number { color: #f78c6c; }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border: 1px solid var(--border-color);
+        }
+
+        th {
+            background: var(--primary-color);
+            color: white;
+            font-weight: 600;
+        }
+
+        tr:nth-child(even) {
+            background: #f8fafc;
+        }
+
+        .tip, .warning, .info {
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        .tip {
+            background: #dcfce7;
+            border-left: 4px solid #16a34a;
+        }
+
+        .warning {
+            background: #fef3c7;
+            border-left: 4px solid #f59e0b;
+        }
+
+        .info {
+            background: #dbeafe;
+            border-left: 4px solid #3b82f6;
+        }
+
+        .tip::before { content: "💡 TIP: "; font-weight: bold; }
+        .warning::before { content: "⚠️ WARNING: "; font-weight: bold; }
+        .info::before { content: "ℹ️ INFO: "; font-weight: bold; }
+
+        ul, ol {
+            margin: 15px 0;
+            padding-left: 30px;
+        }
+
+        li {
+            margin: 8px 0;
+        }
+
+        .file-structure {
+            background: #f1f5f9;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 0.9rem;
+        }
+
+        .file-structure .folder { color: #2563eb; font-weight: bold; }
+        .file-structure .file { color: #16a34a; }
+        .file-structure .desc { color: #64748b; font-style: italic; }
+
+        .step {
+            display: flex;
+            align-items: flex-start;
+            margin: 20px 0;
+            padding: 20px;
+            background: #f8fafc;
+            border-radius: 8px;
+        }
+
+        .step-number {
+            background: var(--primary-color);
+            color: white;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 20px;
+            flex-shrink: 0;
+        }
+
+        .step-content {
+            flex: 1;
+        }
+
+        .architecture-diagram {
+            text-align: center;
+            padding: 30px;
+            background: #f8fafc;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        .layer {
+            background: white;
+            border: 2px solid var(--primary-color);
+            border-radius: 8px;
+            padding: 15px 30px;
+            margin: 10px auto;
+            max-width: 400px;
+        }
+
+        .layer h4 {
+            margin: 0;
+            color: var(--primary-color);
+        }
+
+        .arrow {
+            font-size: 1.5rem;
+            color: var(--primary-color);
+        }
+
+        footer {
+            text-align: center;
+            padding: 40px 20px;
+            color: #64748b;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Developer Guide</h1>
+        <p>Double Entry Accounting System - Complete Development Reference</p>
+    </header>
+
+    <div class="container">
+        <!-- Table of Contents -->
+        <nav class="toc">
+            <h2>Table of Contents</h2>
+            <ol>
+                <li><a href="#prerequisites">Prerequisites & Environment Setup</a>
+                    <ol>
+                        <li><a href="#install-java">Installing Java 17</a></li>
+                        <li><a href="#install-maven">Installing Maven</a></li>
+                        <li><a href="#install-ide">IDE Setup (IntelliJ IDEA / VS Code)</a></li>
+                    </ol>
+                </li>
+                <li><a href="#project-overview">Project Overview</a>
+                    <ol>
+                        <li><a href="#tech-stack">Technology Stack</a></li>
+                        <li><a href="#project-structure">Project Structure</a></li>
+                        <li><a href="#architecture">Application Architecture</a></li>
+                    </ol>
+                </li>
+                <li><a href="#build-run">Building & Running the Application</a>
+                    <ol>
+                        <li><a href="#clone-project">Clone the Project</a></li>
+                        <li><a href="#build-project">Build the Project</a></li>
+                        <li><a href="#run-project">Run the Application</a></li>
+                        <li><a href="#access-app">Accessing the Application</a></li>
+                    </ol>
+                </li>
+                <li><a href="#understanding-code">Understanding the Codebase</a>
+                    <ol>
+                        <li><a href="#model-layer">Model Layer (Entities)</a></li>
+                        <li><a href="#repository-layer">Repository Layer (Data Access)</a></li>
+                        <li><a href="#service-layer">Service Layer (Business Logic)</a></li>
+                        <li><a href="#controller-layer">Controller Layer (Web Layer)</a></li>
+                        <li><a href="#view-layer">View Layer (Thymeleaf Templates)</a></li>
+                    </ol>
+                </li>
+                <li><a href="#adding-features">Adding New Features</a>
+                    <ol>
+                        <li><a href="#example-entity">Step 1: Create the Entity Model</a></li>
+                        <li><a href="#example-repository">Step 2: Create the Repository</a></li>
+                        <li><a href="#example-service">Step 3: Create the Service</a></li>
+                        <li><a href="#example-controller">Step 4: Create the Controller</a></li>
+                        <li><a href="#example-views">Step 5: Create the Views</a></li>
+                    </ol>
+                </li>
+                <li><a href="#testing">Testing</a>
+                    <ol>
+                        <li><a href="#running-tests">Running Tests</a></li>
+                        <li><a href="#writing-tests">Writing Unit Tests</a></li>
+                        <li><a href="#integration-tests">Integration Tests</a></li>
+                    </ol>
+                </li>
+                <li><a href="#database">Database Management</a>
+                    <ol>
+                        <li><a href="#h2-console">H2 Console (Development)</a></li>
+                        <li><a href="#mysql-setup">MySQL Setup (Production)</a></li>
+                        <li><a href="#data-initialization">Data Initialization</a></li>
+                    </ol>
+                </li>
+                <li><a href="#configuration">Configuration</a></li>
+                <li><a href="#common-patterns">Common Patterns & Best Practices</a></li>
+                <li><a href="#troubleshooting">Troubleshooting</a></li>
+                <li><a href="#feature-ideas">Feature Ideas for Expansion</a></li>
+            </ol>
+        </nav>
+
+        <!-- Section 1: Prerequisites -->
+        <section id="prerequisites">
+            <h2>1. Prerequisites & Environment Setup</h2>
+
+            <h3 id="install-java">1.1 Installing Java 17</h3>
+            <p>This project requires Java 17 or higher. Here's how to install it:</p>
+
+            <h4>On macOS (using Homebrew):</h4>
+            <pre><code># Install Homebrew if you don't have it
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+
+# Install Java 17
+brew install openjdk@17
+
+# Add to PATH (add this to your ~/.zshrc or ~/.bash_profile)
+export PATH="/opt/homebrew/opt/openjdk@17/bin:$PATH"
+
+# Verify installation
+java -version</code></pre>
+
+            <h4>On Windows:</h4>
+            <ol>
+                <li>Download Java 17 from <a href="https://adoptium.net/">Adoptium</a></li>
+                <li>Run the installer and follow the prompts</li>
+                <li>The installer will set JAVA_HOME automatically</li>
+                <li>Open Command Prompt and verify: <code>java -version</code></li>
+            </ol>
+
+            <h4>On Linux (Ubuntu/Debian):</h4>
+            <pre><code>sudo apt update
+sudo apt install openjdk-17-jdk
+java -version</code></pre>
+
+            <h3 id="install-maven">1.2 Installing Maven</h3>
+            <p>Maven is our build tool. It manages dependencies and builds the project.</p>
+
+            <h4>On macOS:</h4>
+            <pre><code>brew install maven
+mvn -version</code></pre>
+
+            <h4>On Windows:</h4>
+            <ol>
+                <li>Download Maven from <a href="https://maven.apache.org/download.cgi">Apache Maven</a></li>
+                <li>Extract to a folder (e.g., C:\Program Files\Maven)</li>
+                <li>Add to PATH: System Properties → Environment Variables → Add Maven's bin folder</li>
+                <li>Verify: <code>mvn -version</code></li>
+            </ol>
+
+            <h4>On Linux:</h4>
+            <pre><code>sudo apt install maven
+mvn -version</code></pre>
+
+            <h3 id="install-ide">1.3 IDE Setup</h3>
+
+            <h4>IntelliJ IDEA (Recommended):</h4>
+            <ol>
+                <li>Download <a href="https://www.jetbrains.com/idea/download/">IntelliJ IDEA Community Edition</a> (free)</li>
+                <li>Open IntelliJ and select "Open"</li>
+                <li>Navigate to the project folder and select <code>pom.xml</code></li>
+                <li>Click "Open as Project"</li>
+                <li>Wait for IntelliJ to download dependencies (see progress bar at bottom)</li>
+            </ol>
+
+            <h4>VS Code:</h4>
+            <ol>
+                <li>Install <a href="https://code.visualstudio.com/">VS Code</a></li>
+                <li>Install the "Extension Pack for Java" from the Extensions marketplace</li>
+                <li>Open the project folder</li>
+                <li>VS Code will automatically detect it as a Maven project</li>
+            </ol>
+        </section>
+
+        <!-- Section 2: Project Overview -->
+        <section id="project-overview">
+            <h2>2. Project Overview</h2>
+
+            <h3 id="tech-stack">2.1 Technology Stack</h3>
+            <table>
+                <tr>
+                    <th>Technology</th>
+                    <th>Purpose</th>
+                    <th>Version</th>
+                </tr>
+                <tr>
+                    <td>Java</td>
+                    <td>Programming Language</td>
+                    <td>17</td>
+                </tr>
+                <tr>
+                    <td>Spring Boot</td>
+                    <td>Application Framework</td>
+                    <td>3.2.0</td>
+                </tr>
+                <tr>
+                    <td>Spring MVC</td>
+                    <td>Web Layer (Controllers, Views)</td>
+                    <td>6.1.1</td>
+                </tr>
+                <tr>
+                    <td>Spring Data JPA</td>
+                    <td>Database Access (ORM)</td>
+                    <td>3.2.0</td>
+                </tr>
+                <tr>
+                    <td>Spring Security</td>
+                    <td>Authentication & Authorization</td>
+                    <td>6.2.0</td>
+                </tr>
+                <tr>
+                    <td>Thymeleaf</td>
+                    <td>Server-side HTML Templates</td>
+                    <td>3.1.2</td>
+                </tr>
+                <tr>
+                    <td>H2 Database</td>
+                    <td>Development Database (embedded)</td>
+                    <td>2.2.x</td>
+                </tr>
+                <tr>
+                    <td>MySQL</td>
+                    <td>Production Database</td>
+                    <td>8.x</td>
+                </tr>
+                <tr>
+                    <td>Lombok</td>
+                    <td>Reduce Boilerplate Code</td>
+                    <td>1.18.x</td>
+                </tr>
+                <tr>
+                    <td>Bootstrap</td>
+                    <td>CSS Framework</td>
+                    <td>5.x</td>
+                </tr>
+            </table>
+
+            <h3 id="project-structure">2.2 Project Structure</h3>
+            <div class="file-structure">
+<span class="folder">accounting-system-claude/</span>
+├── <span class="file">pom.xml</span>                          <span class="desc"># Maven configuration (dependencies)</span>
+├── <span class="folder">src/</span>
+│   ├── <span class="folder">main/</span>
+│   │   ├── <span class="folder">java/com/accounting/</span>
+│   │   │   ├── <span class="file">AccountingApplication.java</span>   <span class="desc"># Main entry point</span>
+│   │   │   ├── <span class="folder">config/</span>                      <span class="desc"># Configuration classes</span>
+│   │   │   │   ├── <span class="file">SecurityConfig.java</span>      <span class="desc"># Security settings</span>
+│   │   │   │   └── <span class="file">WebConfig.java</span>           <span class="desc"># Web settings</span>
+│   │   │   ├── <span class="folder">model/</span>                       <span class="desc"># Entity classes (database tables)</span>
+│   │   │   │   ├── <span class="file">Account.java</span>
+│   │   │   │   ├── <span class="file">AccountType.java</span>
+│   │   │   │   ├── <span class="file">JournalEntry.java</span>
+│   │   │   │   ├── <span class="file">JournalEntryLine.java</span>
+│   │   │   │   ├── <span class="file">Invoice.java</span>
+│   │   │   │   ├── <span class="file">Customer.java</span>
+│   │   │   │   └── ...
+│   │   │   ├── <span class="folder">repository/</span>                  <span class="desc"># Database queries</span>
+│   │   │   │   ├── <span class="file">AccountRepository.java</span>
+│   │   │   │   ├── <span class="file">JournalEntryRepository.java</span>
+│   │   │   │   └── ...
+│   │   │   ├── <span class="folder">service/</span>                     <span class="desc"># Business logic</span>
+│   │   │   │   ├── <span class="file">AccountService.java</span>
+│   │   │   │   ├── <span class="file">JournalService.java</span>
+│   │   │   │   ├── <span class="file">LedgerService.java</span>
+│   │   │   │   └── ...
+│   │   │   ├── <span class="folder">controller/</span>                  <span class="desc"># Web request handlers</span>
+│   │   │   │   ├── <span class="file">AccountController.java</span>
+│   │   │   │   ├── <span class="file">JournalController.java</span>
+│   │   │   │   ├── <span class="file">LedgerController.java</span>
+│   │   │   │   └── ...
+│   │   │   ├── <span class="folder">dto/</span>                         <span class="desc"># Data Transfer Objects</span>
+│   │   │   │   ├── <span class="file">LedgerDTO.java</span>
+│   │   │   │   ├── <span class="file">TrialBalanceDTO.java</span>
+│   │   │   │   └── ...
+│   │   │   └── <span class="folder">exception/</span>                   <span class="desc"># Custom exceptions</span>
+│   │   │       └── <span class="file">AccountingException.java</span>
+│   │   └── <span class="folder">resources/</span>
+│   │       ├── <span class="file">application.properties</span>       <span class="desc"># App configuration</span>
+│   │       ├── <span class="file">data.sql</span>                     <span class="desc"># Initial data</span>
+│   │       ├── <span class="folder">static/</span>                      <span class="desc"># CSS, JS, images</span>
+│   │       │   ├── <span class="folder">css/</span>
+│   │       │   └── <span class="folder">js/</span>
+│   │       └── <span class="folder">templates/</span>                   <span class="desc"># Thymeleaf HTML templates</span>
+│   │           ├── <span class="folder">layout/</span>
+│   │           │   └── <span class="file">main.html</span>            <span class="desc"># Base layout</span>
+│   │           ├── <span class="folder">accounts/</span>
+│   │           ├── <span class="folder">journal/</span>
+│   │           ├── <span class="folder">ledger/</span>
+│   │           └── ...
+│   └── <span class="folder">test/</span>                            <span class="desc"># Test files</span>
+│       └── <span class="folder">java/com/accounting/</span>
+│           ├── <span class="folder">service/</span>
+│           ├── <span class="folder">controller/</span>
+│           └── <span class="folder">repository/</span>
+└── <span class="folder">data/</span>                                <span class="desc"># H2 database files (auto-created)</span>
+            </div>
+
+            <h3 id="architecture">2.3 Application Architecture</h3>
+            <p>This application follows the <strong>MVC (Model-View-Controller)</strong> pattern with a layered architecture:</p>
+
+            <div class="architecture-diagram">
+                <div class="layer">
+                    <h4>View Layer</h4>
+                    <p>Thymeleaf HTML Templates</p>
+                </div>
+                <div class="arrow">↓ ↑</div>
+                <div class="layer">
+                    <h4>Controller Layer</h4>
+                    <p>Handles HTTP Requests/Responses</p>
+                </div>
+                <div class="arrow">↓ ↑</div>
+                <div class="layer">
+                    <h4>Service Layer</h4>
+                    <p>Business Logic & Validation</p>
+                </div>
+                <div class="arrow">↓ ↑</div>
+                <div class="layer">
+                    <h4>Repository Layer</h4>
+                    <p>Database Operations (CRUD)</p>
+                </div>
+                <div class="arrow">↓ ↑</div>
+                <div class="layer">
+                    <h4>Model Layer</h4>
+                    <p>Entity Classes (Database Tables)</p>
+                </div>
+            </div>
+
+            <p><strong>Data Flow:</strong></p>
+            <ol>
+                <li>User makes a request (e.g., clicks a link or submits a form)</li>
+                <li>Controller receives the request and calls the appropriate Service</li>
+                <li>Service performs business logic and calls Repository for data access</li>
+                <li>Repository queries/updates the database using the Model entities</li>
+                <li>Data flows back up through the layers</li>
+                <li>Controller passes data to View (Thymeleaf template)</li>
+                <li>View renders HTML and sends response to user</li>
+            </ol>
+        </section>
+
+        <!-- Section 3: Building & Running -->
+        <section id="build-run">
+            <h2>3. Building & Running the Application</h2>
+
+            <h3 id="clone-project">3.1 Clone the Project</h3>
+            <pre><code># Navigate to your workspace
+cd ~/workspace
+
+# Clone the repository (if using Git)
+git clone [repository-url] accounting-system-claude
+
+# Or if you already have the project, navigate to it
+cd accounting-system-claude</code></pre>
+
+            <h3 id="build-project">3.2 Build the Project</h3>
+            <pre><code># Clean and build (compiles code, downloads dependencies)
+mvn clean install
+
+# Build without running tests (faster)
+mvn clean install -DskipTests</code></pre>
+
+            <div class="info">
+                The first build will take longer as Maven downloads all dependencies. Subsequent builds will be faster.
+            </div>
+
+            <h3 id="run-project">3.3 Run the Application</h3>
+
+            <h4>Method 1: Using Maven (Recommended for Development)</h4>
+            <pre><code># Run the application
+mvn spring-boot:run
+
+# The application will start and show:
+# Started AccountingApplication in X.XXX seconds</code></pre>
+
+            <h4>Method 2: Using the JAR file</h4>
+            <pre><code># First, build the JAR
+mvn clean package -DskipTests
+
+# Run the JAR
+java -jar target/accounting-system-claude-1.0.0-SNAPSHOT.jar</code></pre>
+
+            <h4>Method 3: From IDE</h4>
+            <ol>
+                <li>Open <code>AccountingApplication.java</code></li>
+                <li>Click the green "Run" button next to <code>main()</code> method</li>
+            </ol>
+
+            <h3 id="access-app">3.4 Accessing the Application</h3>
+            <table>
+                <tr>
+                    <th>URL</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td><a href="http://localhost:8080">http://localhost:8080</a></td>
+                    <td>Main application (Dashboard)</td>
+                </tr>
+                <tr>
+                    <td><a href="http://localhost:8080/h2-console">http://localhost:8080/h2-console</a></td>
+                    <td>Database console (development)</td>
+                </tr>
+            </table>
+
+            <div class="tip">
+                Default login credentials: <strong>Username:</strong> admin, <strong>Password:</strong> admin
+            </div>
+        </section>
+
+        <!-- Section 4: Understanding the Code -->
+        <section id="understanding-code">
+            <h2>4. Understanding the Codebase</h2>
+
+            <h3 id="model-layer">4.1 Model Layer (Entities)</h3>
+            <p>Models represent database tables. They use JPA annotations to define the table structure.</p>
+
+            <h4>Example: Account.java</h4>
+            <pre><code><span class="annotation">@Entity</span>                          <span class="comment">// This class maps to a database table</span>
+<span class="annotation">@Table</span>(name = <span class="string">"accounts"</span>)         <span class="comment">// Table name in database</span>
+<span class="annotation">@Data</span>                             <span class="comment">// Lombok: generates getters, setters, toString</span>
+<span class="annotation">@NoArgsConstructor</span>                <span class="comment">// Lombok: generates empty constructor</span>
+<span class="annotation">@AllArgsConstructor</span>               <span class="comment">// Lombok: generates constructor with all fields</span>
+<span class="keyword">public class</span> <span class="class-name">Account</span> {
+
+    <span class="annotation">@Id</span>                           <span class="comment">// Primary key</span>
+    <span class="annotation">@GeneratedValue</span>(strategy = GenerationType.IDENTITY)  <span class="comment">// Auto-increment</span>
+    <span class="keyword">private</span> Long id;
+
+    <span class="annotation">@Column</span>(name = <span class="string">"code"</span>, nullable = <span class="keyword">false</span>, unique = <span class="keyword">true</span>)
+    <span class="keyword">private</span> String code;           <span class="comment">// e.g., "1000"</span>
+
+    <span class="annotation">@Column</span>(name = <span class="string">"name"</span>, nullable = <span class="keyword">false</span>)
+    <span class="keyword">private</span> String name;           <span class="comment">// e.g., "Cash"</span>
+
+    <span class="annotation">@Enumerated</span>(EnumType.STRING)   <span class="comment">// Store enum as string in DB</span>
+    <span class="keyword">private</span> AccountType accountType;  <span class="comment">// ASSET, LIABILITY, etc.</span>
+
+    <span class="annotation">@ManyToOne</span>(fetch = FetchType.LAZY)  <span class="comment">// Many accounts can have one parent</span>
+    <span class="annotation">@JoinColumn</span>(name = <span class="string">"parent_id"</span>)
+    <span class="keyword">private</span> Account parent;
+
+    <span class="annotation">@OneToMany</span>(mappedBy = <span class="string">"parent"</span>)  <span class="comment">// One account can have many children</span>
+    <span class="keyword">private</span> List&lt;Account&gt; children;
+
+    <span class="annotation">@Column</span>(name = <span class="string">"is_active"</span>)
+    <span class="keyword">private</span> Boolean isActive = <span class="keyword">true</span>;
+}</code></pre>
+
+            <div class="info">
+                <strong>Key Annotations:</strong><br>
+                <code>@Entity</code> - Marks class as a JPA entity (database table)<br>
+                <code>@Id</code> - Primary key field<br>
+                <code>@Column</code> - Column configuration<br>
+                <code>@ManyToOne</code> / <code>@OneToMany</code> - Relationships between tables
+            </div>
+
+            <h3 id="repository-layer">4.2 Repository Layer (Data Access)</h3>
+            <p>Repositories handle database operations. Spring Data JPA auto-generates implementations.</p>
+
+            <h4>Example: AccountRepository.java</h4>
+            <pre><code><span class="annotation">@Repository</span>
+<span class="keyword">public interface</span> <span class="class-name">AccountRepository</span> <span class="keyword">extends</span> JpaRepository&lt;Account, Long&gt; {
+
+    <span class="comment">// Spring Data JPA generates SQL automatically from method names:</span>
+
+    <span class="comment">// SELECT * FROM accounts WHERE code = ?</span>
+    Optional&lt;Account&gt; findByCode(String code);
+
+    <span class="comment">// SELECT * FROM accounts WHERE account_type = ?</span>
+    List&lt;Account&gt; findByAccountType(AccountType accountType);
+
+    <span class="comment">// SELECT EXISTS(SELECT 1 FROM accounts WHERE code = ?)</span>
+    <span class="keyword">boolean</span> existsByCode(String code);
+
+    <span class="comment">// Custom query using JPQL (Java Persistence Query Language)</span>
+    <span class="annotation">@Query</span>(<span class="string">"SELECT a FROM Account a WHERE a.isActive = true ORDER BY a.code"</span>)
+    List&lt;Account&gt; findAllActive();
+
+    <span class="comment">// Query with parameter</span>
+    <span class="annotation">@Query</span>(<span class="string">"SELECT a FROM Account a WHERE a.parent.id = :parentId"</span>)
+    List&lt;Account&gt; findByParentId(<span class="annotation">@Param</span>(<span class="string">"parentId"</span>) Long parentId);
+}</code></pre>
+
+            <div class="tip">
+                Spring Data JPA generates queries from method names! <code>findByCodeAndIsActive(String code, Boolean active)</code>
+                automatically becomes: <code>SELECT * FROM accounts WHERE code = ? AND is_active = ?</code>
+            </div>
+
+            <h3 id="service-layer">4.3 Service Layer (Business Logic)</h3>
+            <p>Services contain business logic, validation, and coordinate between controllers and repositories.</p>
+
+            <h4>Example: AccountService.java</h4>
+            <pre><code><span class="annotation">@Service</span>                          <span class="comment">// Marks as Spring service bean</span>
+<span class="annotation">@RequiredArgsConstructor</span>          <span class="comment">// Lombok: generates constructor for final fields</span>
+<span class="keyword">public class</span> <span class="class-name">AccountService</span> {
+
+    <span class="keyword">private final</span> AccountRepository accountRepository;
+    <span class="keyword">private final</span> JournalEntryLineRepository journalEntryLineRepository;
+
+    <span class="comment">// Simple find all</span>
+    <span class="keyword">public</span> List&lt;Account&gt; findAll() {
+        <span class="keyword">return</span> accountRepository.findAll();
+    }
+
+    <span class="comment">// Save with validation</span>
+    <span class="annotation">@Transactional</span>                <span class="comment">// Wrap in database transaction</span>
+    <span class="keyword">public</span> Account save(Account account) {
+        <span class="comment">// Business rule: code must be unique for new accounts</span>
+        <span class="keyword">if</span> (account.getId() == <span class="keyword">null</span> && accountRepository.existsByCode(account.getCode())) {
+            <span class="keyword">throw new</span> AccountingException(<span class="string">"Account code already exists: "</span> + account.getCode());
+        }
+        <span class="keyword">return</span> accountRepository.save(account);
+    }
+
+    <span class="comment">// Complex business logic: calculate account balance</span>
+    <span class="keyword">public</span> BigDecimal getBalance(Long accountId) {
+        BigDecimal totalDebit = journalEntryLineRepository.sumDebitByAccountId(accountId);
+        BigDecimal totalCredit = journalEntryLineRepository.sumCreditByAccountId(accountId);
+
+        Account account = accountRepository.findById(accountId)
+                .orElseThrow(() -> <span class="keyword">new</span> AccountingException(<span class="string">"Account not found"</span>));
+
+        <span class="comment">// Debit-normal accounts (Assets, Expenses): balance = debit - credit</span>
+        <span class="comment">// Credit-normal accounts (Liabilities, Revenue): balance = credit - debit</span>
+        <span class="keyword">if</span> (account.isDebitNormal()) {
+            <span class="keyword">return</span> totalDebit.subtract(totalCredit);
+        } <span class="keyword">else</span> {
+            <span class="keyword">return</span> totalCredit.subtract(totalDebit);
+        }
+    }
+}</code></pre>
+
+            <h3 id="controller-layer">4.4 Controller Layer (Web Layer)</h3>
+            <p>Controllers handle HTTP requests, call services, and return views or data.</p>
+
+            <h4>Example: AccountController.java</h4>
+            <pre><code><span class="annotation">@Controller</span>                       <span class="comment">// Handles web requests</span>
+<span class="annotation">@RequestMapping</span>(<span class="string">"/accounts"</span>)      <span class="comment">// Base URL path</span>
+<span class="annotation">@RequiredArgsConstructor</span>
+<span class="keyword">public class</span> <span class="class-name">AccountController</span> {
+
+    <span class="keyword">private final</span> AccountService accountService;
+    <span class="keyword">private final</span> CurrencyService currencyService;
+
+    <span class="comment">// GET /accounts - List all accounts</span>
+    <span class="annotation">@GetMapping</span>
+    <span class="keyword">public</span> String listAccounts(Model model) {
+        <span class="comment">// Add data to the model (available in template)</span>
+        model.addAttribute(<span class="string">"accounts"</span>, accountService.findAllActive());
+        model.addAttribute(<span class="string">"accountTypes"</span>, AccountType.values());
+        <span class="keyword">return</span> <span class="string">"accounts/list"</span>;  <span class="comment">// Returns templates/accounts/list.html</span>
+    }
+
+    <span class="comment">// GET /accounts/new - Show form for new account</span>
+    <span class="annotation">@GetMapping</span>(<span class="string">"/new"</span>)
+    <span class="keyword">public</span> String newAccountForm(Model model) {
+        model.addAttribute(<span class="string">"account"</span>, <span class="keyword">new</span> Account());
+        model.addAttribute(<span class="string">"accountTypes"</span>, AccountType.values());
+        model.addAttribute(<span class="string">"currencies"</span>, currencyService.findAll());
+        <span class="keyword">return</span> <span class="string">"accounts/form"</span>;
+    }
+
+    <span class="comment">// POST /accounts/save - Save account from form</span>
+    <span class="annotation">@PostMapping</span>(<span class="string">"/save"</span>)
+    <span class="keyword">public</span> String saveAccount(<span class="annotation">@ModelAttribute</span> Account account,
+                               RedirectAttributes redirectAttributes) {
+        accountService.save(account);
+        redirectAttributes.addFlashAttribute(<span class="string">"successMessage"</span>, <span class="string">"Account saved!"</span>);
+        <span class="keyword">return</span> <span class="string">"redirect:/accounts"</span>;  <span class="comment">// Redirect to list page</span>
+    }
+
+    <span class="comment">// GET /accounts/view/5 - View account with ID 5</span>
+    <span class="annotation">@GetMapping</span>(<span class="string">"/view/{id}"</span>)
+    <span class="keyword">public</span> String viewAccount(<span class="annotation">@PathVariable</span> Long id, Model model) {
+        Account account = accountService.findById(id)
+                .orElseThrow(() -> <span class="keyword">new</span> IllegalArgumentException(<span class="string">"Not found"</span>));
+        model.addAttribute(<span class="string">"account"</span>, account);
+        model.addAttribute(<span class="string">"balance"</span>, accountService.getBalance(id));
+        <span class="keyword">return</span> <span class="string">"accounts/view"</span>;
+    }
+}</code></pre>
+
+            <div class="info">
+                <strong>Key Annotations:</strong><br>
+                <code>@GetMapping</code> - Handle HTTP GET requests<br>
+                <code>@PostMapping</code> - Handle HTTP POST requests<br>
+                <code>@PathVariable</code> - Extract value from URL path<br>
+                <code>@ModelAttribute</code> - Bind form data to object<br>
+                <code>@RequestParam</code> - Extract query parameters
+            </div>
+
+            <h3 id="view-layer">4.5 View Layer (Thymeleaf Templates)</h3>
+            <p>Thymeleaf templates are HTML files with special attributes for dynamic content.</p>
+
+            <h4>Example: accounts/list.html</h4>
+            <pre><code><span class="comment">&lt;!-- Extends the main layout --&gt;</span>
+&lt;html xmlns:th="http://www.thymeleaf.org"
+      layout:decorate="~{layout/main}"&gt;
+&lt;head&gt;
+    &lt;title&gt;Chart of Accounts&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    <span class="comment">&lt;!-- Content goes into the layout's "content" fragment --&gt;</span>
+    &lt;div layout:fragment="content"&gt;
+
+        <span class="comment">&lt;!-- Link with Thymeleaf URL --&gt;</span>
+        &lt;a <span class="annotation">th:href="@{/accounts/new}"</span> class="btn btn-primary"&gt;New Account&lt;/a&gt;
+
+        <span class="comment">&lt;!-- Table with loop --&gt;</span>
+        &lt;table class="table"&gt;
+            &lt;thead&gt;
+                &lt;tr&gt;
+                    &lt;th&gt;Code&lt;/th&gt;
+                    &lt;th&gt;Name&lt;/th&gt;
+                    &lt;th&gt;Type&lt;/th&gt;
+                    &lt;th&gt;Actions&lt;/th&gt;
+                &lt;/tr&gt;
+            &lt;/thead&gt;
+            &lt;tbody&gt;
+                <span class="comment">&lt;!-- Loop through accounts --&gt;</span>
+                &lt;tr <span class="annotation">th:each="account : ${accounts}"</span>&gt;
+                    &lt;td <span class="annotation">th:text="${account.code}"</span>&gt;1000&lt;/td&gt;
+                    &lt;td <span class="annotation">th:text="${account.name}"</span>&gt;Cash&lt;/td&gt;
+                    &lt;td <span class="annotation">th:text="${account.accountType.displayName}"</span>&gt;Asset&lt;/td&gt;
+                    &lt;td&gt;
+                        <span class="comment">&lt;!-- Link with dynamic ID --&gt;</span>
+                        &lt;a <span class="annotation">th:href="@{/accounts/edit/{id}(id=${account.id})}"</span>&gt;
+                            Edit
+                        &lt;/a&gt;
+                    &lt;/td&gt;
+                &lt;/tr&gt;
+
+                <span class="comment">&lt;!-- Show message if list is empty --&gt;</span>
+                &lt;tr <span class="annotation">th:if="${#lists.isEmpty(accounts)}"</span>&gt;
+                    &lt;td colspan="4"&gt;No accounts found&lt;/td&gt;
+                &lt;/tr&gt;
+            &lt;/tbody&gt;
+        &lt;/table&gt;
+    &lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+
+            <div class="info">
+                <strong>Common Thymeleaf Attributes:</strong><br>
+                <code>th:text="${var}"</code> - Display variable value<br>
+                <code>th:each="item : ${list}"</code> - Loop through list<br>
+                <code>th:href="@{/path}"</code> - Create URL<br>
+                <code>th:if="${condition}"</code> - Conditional display<br>
+                <code>th:value="${var}"</code> - Set input value<br>
+                <code>th:object="${obj}"</code> - Bind form to object
+            </div>
+        </section>
+
+        <!-- Section 5: Adding Features -->
+        <section id="adding-features">
+            <h2>5. Adding New Features (Step-by-Step Example)</h2>
+            <p>Let's walk through adding a new feature: <strong>Expense Categories</strong>.</p>
+
+            <h3 id="example-entity">Step 1: Create the Entity Model</h3>
+            <p>Create file: <code>src/main/java/com/accounting/model/ExpenseCategory.java</code></p>
+
+            <pre><code><span class="keyword">package</span> com.accounting.model;
+
+<span class="keyword">import</span> jakarta.persistence.*;
+<span class="keyword">import</span> lombok.Data;
+<span class="keyword">import</span> lombok.NoArgsConstructor;
+<span class="keyword">import</span> lombok.AllArgsConstructor;
+
+<span class="keyword">import</span> java.time.LocalDateTime;
+
+<span class="annotation">@Entity</span>
+<span class="annotation">@Table</span>(name = <span class="string">"expense_categories"</span>)
+<span class="annotation">@Data</span>
+<span class="annotation">@NoArgsConstructor</span>
+<span class="annotation">@AllArgsConstructor</span>
+<span class="keyword">public class</span> <span class="class-name">ExpenseCategory</span> {
+
+    <span class="annotation">@Id</span>
+    <span class="annotation">@GeneratedValue</span>(strategy = GenerationType.IDENTITY)
+    <span class="keyword">private</span> Long id;
+
+    <span class="annotation">@Column</span>(nullable = <span class="keyword">false</span>, unique = <span class="keyword">true</span>, length = <span class="number">50</span>)
+    <span class="keyword">private</span> String name;
+
+    <span class="annotation">@Column</span>(columnDefinition = <span class="string">"TEXT"</span>)
+    <span class="keyword">private</span> String description;
+
+    <span class="annotation">@Column</span>(name = <span class="string">"is_active"</span>)
+    <span class="keyword">private</span> Boolean isActive = <span class="keyword">true</span>;
+
+    <span class="annotation">@Column</span>(name = <span class="string">"created_at"</span>)
+    <span class="keyword">private</span> LocalDateTime createdAt;
+
+    <span class="annotation">@PrePersist</span>
+    <span class="keyword">protected void</span> onCreate() {
+        createdAt = LocalDateTime.now();
+    }
+}</code></pre>
+
+            <h3 id="example-repository">Step 2: Create the Repository</h3>
+            <p>Create file: <code>src/main/java/com/accounting/repository/ExpenseCategoryRepository.java</code></p>
+
+            <pre><code><span class="keyword">package</span> com.accounting.repository;
+
+<span class="keyword">import</span> com.accounting.model.ExpenseCategory;
+<span class="keyword">import</span> org.springframework.data.jpa.repository.JpaRepository;
+<span class="keyword">import</span> org.springframework.data.jpa.repository.Query;
+<span class="keyword">import</span> org.springframework.stereotype.Repository;
+
+<span class="keyword">import</span> java.util.List;
+<span class="keyword">import</span> java.util.Optional;
+
+<span class="annotation">@Repository</span>
+<span class="keyword">public interface</span> <span class="class-name">ExpenseCategoryRepository</span> <span class="keyword">extends</span> JpaRepository&lt;ExpenseCategory, Long&gt; {
+
+    Optional&lt;ExpenseCategory&gt; findByName(String name);
+
+    <span class="keyword">boolean</span> existsByName(String name);
+
+    <span class="annotation">@Query</span>(<span class="string">"SELECT e FROM ExpenseCategory e WHERE e.isActive = true ORDER BY e.name"</span>)
+    List&lt;ExpenseCategory&gt; findAllActive();
+}</code></pre>
+
+            <h3 id="example-service">Step 3: Create the Service</h3>
+            <p>Create file: <code>src/main/java/com/accounting/service/ExpenseCategoryService.java</code></p>
+
+            <pre><code><span class="keyword">package</span> com.accounting.service;
+
+<span class="keyword">import</span> com.accounting.exception.AccountingException;
+<span class="keyword">import</span> com.accounting.model.ExpenseCategory;
+<span class="keyword">import</span> com.accounting.repository.ExpenseCategoryRepository;
+<span class="keyword">import</span> lombok.RequiredArgsConstructor;
+<span class="keyword">import</span> org.springframework.stereotype.Service;
+<span class="keyword">import</span> org.springframework.transaction.annotation.Transactional;
+
+<span class="keyword">import</span> java.util.List;
+<span class="keyword">import</span> java.util.Optional;
+
+<span class="annotation">@Service</span>
+<span class="annotation">@RequiredArgsConstructor</span>
+<span class="keyword">public class</span> <span class="class-name">ExpenseCategoryService</span> {
+
+    <span class="keyword">private final</span> ExpenseCategoryRepository repository;
+
+    <span class="keyword">public</span> List&lt;ExpenseCategory&gt; findAll() {
+        <span class="keyword">return</span> repository.findAll();
+    }
+
+    <span class="keyword">public</span> List&lt;ExpenseCategory&gt; findAllActive() {
+        <span class="keyword">return</span> repository.findAllActive();
+    }
+
+    <span class="keyword">public</span> Optional&lt;ExpenseCategory&gt; findById(Long id) {
+        <span class="keyword">return</span> repository.findById(id);
+    }
+
+    <span class="annotation">@Transactional</span>
+    <span class="keyword">public</span> ExpenseCategory save(ExpenseCategory category) {
+        <span class="comment">// Validate: name must be unique for new categories</span>
+        <span class="keyword">if</span> (category.getId() == <span class="keyword">null</span> && repository.existsByName(category.getName())) {
+            <span class="keyword">throw new</span> AccountingException(<span class="string">"Category name already exists: "</span> + category.getName());
+        }
+        <span class="keyword">return</span> repository.save(category);
+    }
+
+    <span class="annotation">@Transactional</span>
+    <span class="keyword">public void</span> delete(Long id) {
+        repository.deleteById(id);
+    }
+
+    <span class="annotation">@Transactional</span>
+    <span class="keyword">public void</span> toggleActive(Long id) {
+        ExpenseCategory category = repository.findById(id)
+                .orElseThrow(() -> <span class="keyword">new</span> AccountingException(<span class="string">"Category not found"</span>));
+        category.setIsActive(!category.getIsActive());
+        repository.save(category);
+    }
+}</code></pre>
+
+            <h3 id="example-controller">Step 4: Create the Controller</h3>
+            <p>Create file: <code>src/main/java/com/accounting/controller/ExpenseCategoryController.java</code></p>
+
+            <pre><code><span class="keyword">package</span> com.accounting.controller;
+
+<span class="keyword">import</span> com.accounting.model.ExpenseCategory;
+<span class="keyword">import</span> com.accounting.service.ExpenseCategoryService;
+<span class="keyword">import</span> lombok.RequiredArgsConstructor;
+<span class="keyword">import</span> org.springframework.stereotype.Controller;
+<span class="keyword">import</span> org.springframework.ui.Model;
+<span class="keyword">import</span> org.springframework.web.bind.annotation.*;
+<span class="keyword">import</span> org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+<span class="annotation">@Controller</span>
+<span class="annotation">@RequestMapping</span>(<span class="string">"/expense-categories"</span>)
+<span class="annotation">@RequiredArgsConstructor</span>
+<span class="keyword">public class</span> <span class="class-name">ExpenseCategoryController</span> {
+
+    <span class="keyword">private final</span> ExpenseCategoryService service;
+
+    <span class="comment">// List all categories</span>
+    <span class="annotation">@GetMapping</span>
+    <span class="keyword">public</span> String list(Model model) {
+        model.addAttribute(<span class="string">"categories"</span>, service.findAll());
+        <span class="keyword">return</span> <span class="string">"expense-categories/list"</span>;
+    }
+
+    <span class="comment">// Show form for new category</span>
+    <span class="annotation">@GetMapping</span>(<span class="string">"/new"</span>)
+    <span class="keyword">public</span> String newForm(Model model) {
+        model.addAttribute(<span class="string">"category"</span>, <span class="keyword">new</span> ExpenseCategory());
+        <span class="keyword">return</span> <span class="string">"expense-categories/form"</span>;
+    }
+
+    <span class="comment">// Show form for editing</span>
+    <span class="annotation">@GetMapping</span>(<span class="string">"/edit/{id}"</span>)
+    <span class="keyword">public</span> String editForm(<span class="annotation">@PathVariable</span> Long id, Model model) {
+        ExpenseCategory category = service.findById(id)
+                .orElseThrow(() -> <span class="keyword">new</span> IllegalArgumentException(<span class="string">"Category not found"</span>));
+        model.addAttribute(<span class="string">"category"</span>, category);
+        <span class="keyword">return</span> <span class="string">"expense-categories/form"</span>;
+    }
+
+    <span class="comment">// Save category (create or update)</span>
+    <span class="annotation">@PostMapping</span>(<span class="string">"/save"</span>)
+    <span class="keyword">public</span> String save(<span class="annotation">@ModelAttribute</span> ExpenseCategory category,
+                       RedirectAttributes redirectAttributes) {
+        service.save(category);
+        redirectAttributes.addFlashAttribute(<span class="string">"successMessage"</span>, <span class="string">"Category saved successfully!"</span>);
+        <span class="keyword">return</span> <span class="string">"redirect:/expense-categories"</span>;
+    }
+
+    <span class="comment">// Delete category</span>
+    <span class="annotation">@PostMapping</span>(<span class="string">"/delete/{id}"</span>)
+    <span class="keyword">public</span> String delete(<span class="annotation">@PathVariable</span> Long id, RedirectAttributes redirectAttributes) {
+        service.delete(id);
+        redirectAttributes.addFlashAttribute(<span class="string">"successMessage"</span>, <span class="string">"Category deleted!"</span>);
+        <span class="keyword">return</span> <span class="string">"redirect:/expense-categories"</span>;
+    }
+}</code></pre>
+
+            <h3 id="example-views">Step 5: Create the Views</h3>
+
+            <h4>List View: <code>src/main/resources/templates/expense-categories/list.html</code></h4>
+            <pre><code>&lt;!DOCTYPE html&gt;
+&lt;html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/main}"&gt;
+&lt;head&gt;
+    &lt;title&gt;Expense Categories&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;div layout:fragment="content"&gt;
+        &lt;div class="d-flex justify-content-between align-items-center mb-4"&gt;
+            &lt;h2&gt;&lt;i class="bi bi-tags me-2"&gt;&lt;/i&gt;Expense Categories&lt;/h2&gt;
+            &lt;a th:href="@{/expense-categories/new}" class="btn btn-primary"&gt;
+                &lt;i class="bi bi-plus-circle me-1"&gt;&lt;/i&gt;New Category
+            &lt;/a&gt;
+        &lt;/div&gt;
+
+        &lt;!-- Success Message --&gt;
+        &lt;div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show"&gt;
+            &lt;span th:text="${successMessage}"&gt;&lt;/span&gt;
+            &lt;button type="button" class="btn-close" data-bs-dismiss="alert"&gt;&lt;/button&gt;
+        &lt;/div&gt;
+
+        &lt;div class="card shadow"&gt;
+            &lt;div class="card-body"&gt;
+                &lt;table class="table table-hover"&gt;
+                    &lt;thead class="table-dark"&gt;
+                        &lt;tr&gt;
+                            &lt;th&gt;Name&lt;/th&gt;
+                            &lt;th&gt;Description&lt;/th&gt;
+                            &lt;th&gt;Status&lt;/th&gt;
+                            &lt;th&gt;Actions&lt;/th&gt;
+                        &lt;/tr&gt;
+                    &lt;/thead&gt;
+                    &lt;tbody&gt;
+                        &lt;tr th:each="category : ${categories}"&gt;
+                            &lt;td th:text="${category.name}"&gt;Category Name&lt;/td&gt;
+                            &lt;td th:text="${category.description}"&gt;Description&lt;/td&gt;
+                            &lt;td&gt;
+                                &lt;span th:if="${category.isActive}" class="badge bg-success"&gt;Active&lt;/span&gt;
+                                &lt;span th:unless="${category.isActive}" class="badge bg-secondary"&gt;Inactive&lt;/span&gt;
+                            &lt;/td&gt;
+                            &lt;td&gt;
+                                &lt;div class="btn-group btn-group-sm"&gt;
+                                    &lt;a th:href="@{/expense-categories/edit/{id}(id=${category.id})}"
+                                       class="btn btn-outline-primary"&gt;
+                                        &lt;i class="bi bi-pencil"&gt;&lt;/i&gt;
+                                    &lt;/a&gt;
+                                    &lt;form th:action="@{/expense-categories/delete/{id}(id=${category.id})}"
+                                          method="post" style="display:inline;"&gt;
+                                        &lt;button type="submit" class="btn btn-outline-danger"
+                                                onclick="return confirm('Delete this category?')"&gt;
+                                            &lt;i class="bi bi-trash"&gt;&lt;/i&gt;
+                                        &lt;/button&gt;
+                                    &lt;/form&gt;
+                                &lt;/div&gt;
+                            &lt;/td&gt;
+                        &lt;/tr&gt;
+                        &lt;tr th:if="${#lists.isEmpty(categories)}"&gt;
+                            &lt;td colspan="4" class="text-center text-muted"&gt;No categories found&lt;/td&gt;
+                        &lt;/tr&gt;
+                    &lt;/tbody&gt;
+                &lt;/table&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+
+            <h4>Form View: <code>src/main/resources/templates/expense-categories/form.html</code></h4>
+            <pre><code>&lt;!DOCTYPE html&gt;
+&lt;html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/main}"&gt;
+&lt;head&gt;
+    &lt;title&gt;Expense Category&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;div layout:fragment="content"&gt;
+        &lt;h2 th:text="${category.id == null} ? 'New Category' : 'Edit Category'"&gt;Category&lt;/h2&gt;
+
+        &lt;div class="row justify-content-center"&gt;
+            &lt;div class="col-lg-6"&gt;
+                &lt;div class="card shadow"&gt;
+                    &lt;div class="card-body"&gt;
+                        &lt;form th:action="@{/expense-categories/save}"
+                              th:object="${category}" method="post"&gt;
+
+                            &lt;!-- Hidden ID for updates --&gt;
+                            &lt;input type="hidden" th:field="*{id}"/&gt;
+
+                            &lt;div class="mb-3"&gt;
+                                &lt;label for="name" class="form-label"&gt;Name *&lt;/label&gt;
+                                &lt;input type="text" class="form-control" id="name"
+                                       th:field="*{name}" required/&gt;
+                            &lt;/div&gt;
+
+                            &lt;div class="mb-3"&gt;
+                                &lt;label for="description" class="form-label"&gt;Description&lt;/label&gt;
+                                &lt;textarea class="form-control" id="description"
+                                          th:field="*{description}" rows="3"&gt;&lt;/textarea&gt;
+                            &lt;/div&gt;
+
+                            &lt;div class="mb-3 form-check"&gt;
+                                &lt;input type="checkbox" class="form-check-input" id="isActive"
+                                       th:field="*{isActive}"/&gt;
+                                &lt;label class="form-check-label" for="isActive"&gt;Active&lt;/label&gt;
+                            &lt;/div&gt;
+
+                            &lt;div class="d-flex gap-2"&gt;
+                                &lt;button type="submit" class="btn btn-primary"&gt;
+                                    &lt;i class="bi bi-check-circle me-1"&gt;&lt;/i&gt;Save
+                                &lt;/button&gt;
+                                &lt;a th:href="@{/expense-categories}" class="btn btn-secondary"&gt;
+                                    Cancel
+                                &lt;/a&gt;
+                            &lt;/div&gt;
+                        &lt;/form&gt;
+                    &lt;/div&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+
+            <div class="tip">
+                After creating all files, restart the application. The database table will be created automatically!
+                Access your new feature at: <a href="http://localhost:8080/expense-categories">http://localhost:8080/expense-categories</a>
+            </div>
+        </section>
+
+        <!-- Section 6: Testing -->
+        <section id="testing">
+            <h2>6. Testing</h2>
+
+            <h3 id="running-tests">6.1 Running Tests</h3>
+            <pre><code># Run all tests
+mvn test
+
+# Run a specific test class
+mvn test -Dtest=AccountServiceTest
+
+# Run tests with detailed output
+mvn test -Dtest=AccountServiceTest -Dsurefire.printSummary=true</code></pre>
+
+            <h3 id="writing-tests">6.2 Writing Unit Tests</h3>
+            <p>Example test for our ExpenseCategoryService:</p>
+
+            <p>Create: <code>src/test/java/com/accounting/service/ExpenseCategoryServiceTest.java</code></p>
+            <pre><code><span class="keyword">package</span> com.accounting.service;
+
+<span class="keyword">import</span> com.accounting.exception.AccountingException;
+<span class="keyword">import</span> com.accounting.model.ExpenseCategory;
+<span class="keyword">import</span> com.accounting.repository.ExpenseCategoryRepository;
+<span class="keyword">import</span> org.junit.jupiter.api.BeforeEach;
+<span class="keyword">import</span> org.junit.jupiter.api.DisplayName;
+<span class="keyword">import</span> org.junit.jupiter.api.Test;
+<span class="keyword">import</span> org.junit.jupiter.api.extension.ExtendWith;
+<span class="keyword">import</span> org.mockito.InjectMocks;
+<span class="keyword">import</span> org.mockito.Mock;
+<span class="keyword">import</span> org.mockito.junit.jupiter.MockitoExtension;
+
+<span class="keyword">import</span> java.util.Arrays;
+<span class="keyword">import</span> java.util.List;
+<span class="keyword">import</span> java.util.Optional;
+
+<span class="keyword">import static</span> org.assertj.core.api.Assertions.*;
+<span class="keyword">import static</span> org.mockito.Mockito.*;
+
+<span class="annotation">@ExtendWith</span>(MockitoExtension.<span class="keyword">class</span>)
+<span class="annotation">@DisplayName</span>(<span class="string">"ExpenseCategoryService Tests"</span>)
+<span class="keyword">class</span> <span class="class-name">ExpenseCategoryServiceTest</span> {
+
+    <span class="annotation">@Mock</span>
+    <span class="keyword">private</span> ExpenseCategoryRepository repository;
+
+    <span class="annotation">@InjectMocks</span>
+    <span class="keyword">private</span> ExpenseCategoryService service;
+
+    <span class="keyword">private</span> ExpenseCategory testCategory;
+
+    <span class="annotation">@BeforeEach</span>
+    <span class="keyword">void</span> setUp() {
+        testCategory = <span class="keyword">new</span> ExpenseCategory();
+        testCategory.setId(<span class="number">1L</span>);
+        testCategory.setName(<span class="string">"Office Supplies"</span>);
+        testCategory.setDescription(<span class="string">"Pens, paper, etc."</span>);
+        testCategory.setIsActive(<span class="keyword">true</span>);
+    }
+
+    <span class="annotation">@Test</span>
+    <span class="annotation">@DisplayName</span>(<span class="string">"Should find all categories"</span>)
+    <span class="keyword">void</span> findAll_ReturnsAllCategories() {
+        <span class="comment">// Arrange (set up test data)</span>
+        List&lt;ExpenseCategory&gt; categories = Arrays.asList(testCategory);
+        when(repository.findAll()).thenReturn(categories);
+
+        <span class="comment">// Act (call the method being tested)</span>
+        List&lt;ExpenseCategory&gt; result = service.findAll();
+
+        <span class="comment">// Assert (verify the result)</span>
+        assertThat(result).hasSize(<span class="number">1</span>);
+        assertThat(result.get(<span class="number">0</span>).getName()).isEqualTo(<span class="string">"Office Supplies"</span>);
+        verify(repository).findAll();  <span class="comment">// Verify repository was called</span>
+    }
+
+    <span class="annotation">@Test</span>
+    <span class="annotation">@DisplayName</span>(<span class="string">"Should save new category"</span>)
+    <span class="keyword">void</span> save_NewCategory_SavesSuccessfully() {
+        ExpenseCategory newCategory = <span class="keyword">new</span> ExpenseCategory();
+        newCategory.setName(<span class="string">"Travel"</span>);
+
+        when(repository.existsByName(<span class="string">"Travel"</span>)).thenReturn(<span class="keyword">false</span>);
+        when(repository.save(newCategory)).thenReturn(testCategory);
+
+        ExpenseCategory result = service.save(newCategory);
+
+        assertThat(result).isNotNull();
+        verify(repository).save(newCategory);
+    }
+
+    <span class="annotation">@Test</span>
+    <span class="annotation">@DisplayName</span>(<span class="string">"Should throw exception for duplicate name"</span>)
+    <span class="keyword">void</span> save_DuplicateName_ThrowsException() {
+        ExpenseCategory newCategory = <span class="keyword">new</span> ExpenseCategory();
+        newCategory.setName(<span class="string">"Office Supplies"</span>);  <span class="comment">// Already exists</span>
+
+        when(repository.existsByName(<span class="string">"Office Supplies"</span>)).thenReturn(<span class="keyword">true</span>);
+
+        assertThatThrownBy(() -> service.save(newCategory))
+                .isInstanceOf(AccountingException.<span class="keyword">class</span>)
+                .hasMessageContaining(<span class="string">"already exists"</span>);
+
+        verify(repository, never()).save(any());  <span class="comment">// Save should NOT be called</span>
+    }
+
+    <span class="annotation">@Test</span>
+    <span class="annotation">@DisplayName</span>(<span class="string">"Should find category by ID"</span>)
+    <span class="keyword">void</span> findById_ExistingId_ReturnsCategory() {
+        when(repository.findById(<span class="number">1L</span>)).thenReturn(Optional.of(testCategory));
+
+        Optional&lt;ExpenseCategory&gt; result = service.findById(<span class="number">1L</span>);
+
+        assertThat(result).isPresent();
+        assertThat(result.get().getName()).isEqualTo(<span class="string">"Office Supplies"</span>);
+    }
+
+    <span class="annotation">@Test</span>
+    <span class="annotation">@DisplayName</span>(<span class="string">"Should return empty for non-existent ID"</span>)
+    <span class="keyword">void</span> findById_NonExistentId_ReturnsEmpty() {
+        when(repository.findById(<span class="number">999L</span>)).thenReturn(Optional.empty());
+
+        Optional&lt;ExpenseCategory&gt; result = service.findById(<span class="number">999L</span>);
+
+        assertThat(result).isEmpty();
+    }
+}</code></pre>
+
+            <h3 id="integration-tests">6.3 Integration Tests</h3>
+            <p>Integration tests test the full stack with a real database:</p>
+
+            <pre><code><span class="annotation">@SpringBootTest</span>
+<span class="annotation">@AutoConfigureTestDatabase</span>  <span class="comment">// Uses H2 in-memory database</span>
+<span class="annotation">@Transactional</span>              <span class="comment">// Rollback after each test</span>
+<span class="keyword">class</span> <span class="class-name">ExpenseCategoryIntegrationTest</span> {
+
+    <span class="annotation">@Autowired</span>
+    <span class="keyword">private</span> ExpenseCategoryService service;
+
+    <span class="annotation">@Autowired</span>
+    <span class="keyword">private</span> ExpenseCategoryRepository repository;
+
+    <span class="annotation">@Test</span>
+    <span class="keyword">void</span> shouldSaveAndRetrieveCategory() {
+        ExpenseCategory category = <span class="keyword">new</span> ExpenseCategory();
+        category.setName(<span class="string">"Test Category"</span>);
+        category.setIsActive(<span class="keyword">true</span>);
+
+        ExpenseCategory saved = service.save(category);
+
+        assertThat(saved.getId()).isNotNull();
+        assertThat(repository.findById(saved.getId())).isPresent();
+    }
+}</code></pre>
+        </section>
+
+        <!-- Section 7: Database -->
+        <section id="database">
+            <h2>7. Database Management</h2>
+
+            <h3 id="h2-console">7.1 H2 Console (Development)</h3>
+            <p>Access the H2 database console at: <a href="http://localhost:8080/h2-console">http://localhost:8080/h2-console</a></p>
+
+            <table>
+                <tr>
+                    <th>Setting</th>
+                    <th>Value</th>
+                </tr>
+                <tr>
+                    <td>JDBC URL</td>
+                    <td><code>jdbc:h2:file:./data/accounting_db</code></td>
+                </tr>
+                <tr>
+                    <td>User Name</td>
+                    <td><code>sa</code></td>
+                </tr>
+                <tr>
+                    <td>Password</td>
+                    <td><em>(leave empty)</em></td>
+                </tr>
+            </table>
+
+            <h3 id="mysql-setup">7.2 MySQL Setup (Production)</h3>
+            <p>To use MySQL instead of H2:</p>
+
+            <div class="step">
+                <div class="step-number">1</div>
+                <div class="step-content">
+                    <strong>Install MySQL</strong> and create a database:
+                    <pre><code>CREATE DATABASE accounting_db;
+CREATE USER 'accounting'@'localhost' IDENTIFIED BY 'yourpassword';
+GRANT ALL PRIVILEGES ON accounting_db.* TO 'accounting'@'localhost';
+FLUSH PRIVILEGES;</code></pre>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-number">2</div>
+                <div class="step-content">
+                    <strong>Update application.properties:</strong>
+                    <pre><code># Comment out H2 settings and uncomment MySQL:
+spring.datasource.url=jdbc:mysql://localhost:3306/accounting_db?useSSL=false&serverTimezone=UTC
+spring.datasource.username=accounting
+spring.datasource.password=yourpassword
+spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+spring.jpa.database-platform=org.hibernate.dialect.MySQLDialect
+
+# Disable H2 console
+spring.h2.console.enabled=false</code></pre>
+                </div>
+            </div>
+
+            <h3 id="data-initialization">7.3 Data Initialization</h3>
+            <p>Initial data is loaded from <code>src/main/resources/data.sql</code>. This runs on every startup when using H2.</p>
+
+            <pre><code><span class="comment">-- Example: Add initial expense categories</span>
+INSERT INTO expense_categories (name, description, is_active, created_at)
+VALUES ('Office Supplies', 'Pens, paper, etc.', true, CURRENT_TIMESTAMP);
+
+INSERT INTO expense_categories (name, description, is_active, created_at)
+VALUES ('Travel', 'Business travel expenses', true, CURRENT_TIMESTAMP);</code></pre>
+        </section>
+
+        <!-- Section 8: Configuration -->
+        <section id="configuration">
+            <h2>8. Configuration</h2>
+            <p>Key settings in <code>application.properties</code>:</p>
+
+            <table>
+                <tr>
+                    <th>Property</th>
+                    <th>Description</th>
+                    <th>Default</th>
+                </tr>
+                <tr>
+                    <td><code>server.port</code></td>
+                    <td>HTTP port</td>
+                    <td>8080</td>
+                </tr>
+                <tr>
+                    <td><code>spring.datasource.url</code></td>
+                    <td>Database connection URL</td>
+                    <td>H2 file database</td>
+                </tr>
+                <tr>
+                    <td><code>spring.jpa.hibernate.ddl-auto</code></td>
+                    <td>Schema generation mode</td>
+                    <td>update</td>
+                </tr>
+                <tr>
+                    <td><code>spring.thymeleaf.cache</code></td>
+                    <td>Template caching</td>
+                    <td>false (dev)</td>
+                </tr>
+                <tr>
+                    <td><code>spring.security.user.name</code></td>
+                    <td>Default username</td>
+                    <td>admin</td>
+                </tr>
+                <tr>
+                    <td><code>spring.security.user.password</code></td>
+                    <td>Default password</td>
+                    <td>admin</td>
+                </tr>
+                <tr>
+                    <td><code>logging.level.com.accounting</code></td>
+                    <td>App logging level</td>
+                    <td>DEBUG</td>
+                </tr>
+            </table>
+
+            <div class="warning">
+                For production, change <code>spring.jpa.hibernate.ddl-auto</code> to <code>validate</code>
+                and use database migrations (Flyway/Liquibase) instead.
+            </div>
+        </section>
+
+        <!-- Section 9: Common Patterns -->
+        <section id="common-patterns">
+            <h2>9. Common Patterns & Best Practices</h2>
+
+            <h3>9.1 Exception Handling</h3>
+            <pre><code><span class="comment">// Custom exception for accounting errors</span>
+<span class="keyword">public class</span> <span class="class-name">AccountingException</span> <span class="keyword">extends</span> RuntimeException {
+    <span class="keyword">public</span> AccountingException(String message) {
+        <span class="keyword">super</span>(message);
+    }
+}
+
+<span class="comment">// Throw when validation fails</span>
+<span class="keyword">if</span> (balance.compareTo(BigDecimal.ZERO) != <span class="number">0</span>) {
+    <span class="keyword">throw new</span> AccountingException(<span class="string">"Cannot delete account with non-zero balance"</span>);
+}</code></pre>
+
+            <h3>9.2 Optional Handling</h3>
+            <pre><code><span class="comment">// Pattern 1: orElseThrow</span>
+Account account = accountRepository.findById(id)
+    .orElseThrow(() -> <span class="keyword">new</span> AccountingException(<span class="string">"Account not found: "</span> + id));
+
+<span class="comment">// Pattern 2: orElse with default</span>
+BigDecimal balance = Optional.ofNullable(result).orElse(BigDecimal.ZERO);
+
+<span class="comment">// Pattern 3: ifPresent</span>
+accountRepository.findByCode(code).ifPresent(account -> {
+    <span class="comment">// do something with account</span>
+});</code></pre>
+
+            <h3>9.3 Transaction Management</h3>
+            <pre><code><span class="annotation">@Transactional</span>  <span class="comment">// All operations in this method are atomic</span>
+<span class="keyword">public void</span> transferFunds(Long fromId, Long toId, BigDecimal amount) {
+    debit(fromId, amount);   <span class="comment">// If this succeeds...</span>
+    credit(toId, amount);    <span class="comment">// ...but this fails, both are rolled back</span>
+}
+
+<span class="annotation">@Transactional</span>(readOnly = <span class="keyword">true</span>)  <span class="comment">// Optimization for read-only operations</span>
+<span class="keyword">public</span> List&lt;Account&gt; findAll() {
+    <span class="keyword">return</span> repository.findAll();
+}</code></pre>
+
+            <h3>9.4 DTOs for Complex Data</h3>
+            <pre><code><span class="comment">// Data Transfer Object for views that need computed/combined data</span>
+<span class="annotation">@Data</span>
+<span class="keyword">public class</span> <span class="class-name">LedgerDTO</span> {
+    <span class="keyword">private</span> Account account;
+    <span class="keyword">private</span> List&lt;LedgerEntryDTO&gt; entries;
+    <span class="keyword">private</span> BigDecimal openingBalance;
+    <span class="keyword">private</span> BigDecimal closingBalance;
+
+    <span class="annotation">@Data</span>
+    <span class="keyword">public static class</span> <span class="class-name">LedgerEntryDTO</span> {
+        <span class="keyword">private</span> LocalDate date;
+        <span class="keyword">private</span> String description;
+        <span class="keyword">private</span> BigDecimal debit;
+        <span class="keyword">private</span> BigDecimal credit;
+        <span class="keyword">private</span> BigDecimal runningBalance;
+    }
+}</code></pre>
+        </section>
+
+        <!-- Section 10: Troubleshooting -->
+        <section id="troubleshooting">
+            <h2>10. Troubleshooting</h2>
+
+            <h3>Common Issues & Solutions</h3>
+
+            <table>
+                <tr>
+                    <th>Issue</th>
+                    <th>Solution</th>
+                </tr>
+                <tr>
+                    <td>"Port 8080 already in use"</td>
+                    <td>Stop other apps on port 8080, or change <code>server.port</code> in properties</td>
+                </tr>
+                <tr>
+                    <td>"Cannot find symbol" (compile error)</td>
+                    <td>Enable annotation processing in IDE for Lombok</td>
+                </tr>
+                <tr>
+                    <td>Template not found</td>
+                    <td>Check file path matches return string (e.g., <code>"accounts/list"</code> → <code>templates/accounts/list.html</code>)</td>
+                </tr>
+                <tr>
+                    <td>Database table not created</td>
+                    <td>Check entity has <code>@Entity</code> annotation and is in scanned package</td>
+                </tr>
+                <tr>
+                    <td>Thymeleaf errors</td>
+                    <td>Check syntax: <code>th:text="${var}"</code> not <code>th:text="var"</code></td>
+                </tr>
+                <tr>
+                    <td>Security: 403 Forbidden</td>
+                    <td>Check user has required role, or add endpoint to security config</td>
+                </tr>
+                <tr>
+                    <td>Form not submitting</td>
+                    <td>Ensure CSRF token is included (Thymeleaf adds automatically with <code>th:action</code>)</td>
+                </tr>
+            </table>
+
+            <h3>Checking Logs</h3>
+            <pre><code># Logs appear in console when running
+# Or check application logs in the terminal
+
+# Increase logging for debugging:
+# In application.properties:
+logging.level.com.accounting=DEBUG
+logging.level.org.springframework.web=DEBUG</code></pre>
+        </section>
+
+        <!-- Section 11: Feature Ideas -->
+        <section id="feature-ideas">
+            <h2>11. Feature Ideas for Expansion</h2>
+
+            <p>Here are some features you can add to practice your skills:</p>
+
+            <h3>Beginner Level</h3>
+            <ul>
+                <li><strong>Expense Categories</strong> (shown in Section 5)</li>
+                <li><strong>Payment Methods</strong> - Track how payments are made (Cash, Check, Card)</li>
+                <li><strong>Tax Rates</strong> - Configurable tax rates for invoices</li>
+                <li><strong>Notes/Comments</strong> - Add notes to journal entries</li>
+            </ul>
+
+            <h3>Intermediate Level</h3>
+            <ul>
+                <li><strong>Recurring Transactions</strong> - Auto-generate monthly entries</li>
+                <li><strong>Budgets</strong> - Set budget limits per account and track spending</li>
+                <li><strong>Document Attachments</strong> - Attach receipts/invoices to entries</li>
+                <li><strong>Multiple Currencies</strong> - Support for foreign currency transactions</li>
+                <li><strong>Vendor Management</strong> - Track vendors and payables</li>
+            </ul>
+
+            <h3>Advanced Level</h3>
+            <ul>
+                <li><strong>REST API</strong> - Add <code>@RestController</code> endpoints for mobile app</li>
+                <li><strong>PDF Reports</strong> - Generate PDF financial statements</li>
+                <li><strong>Email Notifications</strong> - Send invoice reminders</li>
+                <li><strong>Audit Trail</strong> - Track all changes with timestamps and users</li>
+                <li><strong>Multi-Company</strong> - Support multiple companies in one system</li>
+            </ul>
+
+            <div class="tip">
+                Start with a simple feature, follow the 5-step pattern from Section 5, and gradually add complexity!
+            </div>
+        </section>
+    </div>
+
+    <footer>
+        <p>Double Entry Accounting System - Developer Guide</p>
+        <p>Built with Spring Boot, Thymeleaf, and Bootstrap</p>
+    </footer>
+</body>
+</html>
