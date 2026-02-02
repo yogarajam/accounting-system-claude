@@ -1,32 +1,35 @@
-# Create .gitignore file
-touch .gitignore
-```
-
-Open `.gitignore` in a text editor and add common exclusions (adjust based on your tech stack):
-```
-# Dependencies
-node_modules/
-vendor/
-
-# Environment files
-.env
-.env.local
+# Build output
+target/
 
 # IDE files
-.vscode/
 .idea/
+*.iml
+.vscode/
 *.swp
 *.swo
+.project
+.classpath
+.settings/
 
 # OS files
 .DS_Store
 Thumbs.db
 
-# Build files
-dist/
-build/
+# Environment files
+.env
+.env.local
+
+# Logs
 *.log
+logs/
 
 # Database files
-*.sqlite
 *.db
+*.sqlite
+data/
+
+# Maven
+dependency-reduced-pom.xml
+
+# Test output
+test-output/

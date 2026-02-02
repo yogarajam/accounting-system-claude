@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<extentreports>
+    <configuration>
+        <!-- Report Theme: STANDARD or DARK -->
+        <theme>STANDARD</theme>
+
+        <!-- Document Encoding -->
+        <encoding>UTF-8</encoding>
+
+        <!-- Protocol for loading resources -->
+        <protocol>https</protocol>
+
+        <!-- Document Title -->
+        <documentTitle>Accounting System - Automation Test Report</documentTitle>
+
+        <!-- Report Name -->
+        <reportName>Accounting System Test Execution Report</reportName>
+
+        <!-- Timestamp Format -->
+        <timeStampFormat>MMM dd, yyyy HH:mm:ss</timeStampFormat>
+
+        <!-- CSS Customization -->
+        <css>
+            .nav-logo > a > img {
+                height: 50px;
+            }
+        </css>
+
+        <!-- JS Customization -->
+        <js>
+            $(document).ready(function() {
+                // Custom JS
+            });
+        </js>
+    </configuration>
+</extentreports>

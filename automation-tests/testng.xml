@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<suite name="Accounting System Test Suite" parallel="methods" thread-count="4">
+
+    <listeners>
+        <listener class-name="com.accounting.automation.listeners.TestListener"/>
+    </listeners>
+
+    <test name="All Tests">
+        <classes>
+            <class name="com.accounting.automation.runners.TestRunner"/>
+        </classes>
+    </test>
+
+</suite>
