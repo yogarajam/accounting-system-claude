@@ -130,4 +130,11 @@ public class ReportSteps {
                 .as("Total liabilities should be displayed")
                 .isNotEmpty();
     }
+
+    @Then("I should see the reports page")
+    public void iShouldSeeTheReportsPage() {
+        assertThat(reportsPage.isReportsPageDisplayed())
+                .as("Reports page should be displayed")
+                .isTrue();
+    }
 }

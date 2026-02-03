@@ -69,14 +69,16 @@ public class JournalSteps {
 
     @When("I select debit account {string} with amount {string}")
     public void iSelectDebitAccountWithAmount(String account, String amount) {
+        // Row 0 for debit entry
         journalPage.selectDebitAccount(0, account);
         journalPage.enterDebitAmount(0, amount);
     }
 
     @When("I select credit account {string} with amount {string}")
     public void iSelectCreditAccountWithAmount(String account, String amount) {
-        journalPage.selectCreditAccount(0, account);
-        journalPage.enterCreditAmount(0, amount);
+        // Row 1 for credit entry (different row from debit)
+        journalPage.selectCreditAccount(1, account);
+        journalPage.enterCreditAmount(1, amount);
     }
 
     @When("I create a simple journal entry with debit {string} and credit {string} for amount {string}")
@@ -102,9 +104,27 @@ public class JournalSteps {
         journalPage.viewEntry(reference);
     }
 
+    @When("I view journal entry with the created reference")
+    public void iViewJournalEntryWithTheCreatedReference() {
+        journalPage.viewEntry(lastCreatedReference);
+    }
+
     @When("I post journal entry {string}")
     public void iPostJournalEntry(String reference) {
         journalPage.postEntry(reference);
+    }
+
+    @When("I post journal entry with the created reference")
+    public void iPostJournalEntryWithTheCreatedReference() {
+        journalPage.postEntry(lastCreatedReference);
+    }
+
+    @Then("I should see the journal entry details")
+    public void iShouldSeeTheJournalEntryDetails() {
+        // Check that we're on a journal entry view page
+        assertThat(journalPage.getCurrentUrl())
+                .as("Should be on journal entry view page")
+                .containsAnyOf("/view", "/journal/");
     }
 
     @Then("I should see the journal entries list")

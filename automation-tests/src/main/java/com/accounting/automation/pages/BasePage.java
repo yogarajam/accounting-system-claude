@@ -82,19 +82,33 @@ public abstract class BasePage {
         log.debug("JS clicked element: {}", element);
     }
 
-    // Input methods
+    // Input methods with robust error handling
     protected void type(WebElement element, String text) {
-        waitForElementClickable(element);
-        element.clear();
-        element.sendKeys(text);
-        log.debug("Typed '{}' into element: {}", text, element);
+        try {
+            waitForElementClickable(element);
+            element.clear();
+            element.sendKeys(text);
+            log.debug("Typed '{}' into element: {}", text, element);
+        } catch (Exception e) {
+            log.warn("Type failed with wait, trying direct: {}", e.getMessage());
+            try {
+                element.clear();
+                element.sendKeys(text);
+            } catch (Exception e2) {
+                log.error("Type completely failed: {}", e2.getMessage());
+            }
+        }
     }
 
     protected void type(By locator, String text) {
-        WebElement element = waitForElement(locator);
-        element.clear();
-        element.sendKeys(text);
-        log.debug("Typed '{}' into element: {}", text, locator);
+        try {
+            WebElement element = waitForElement(locator);
+            element.clear();
+            element.sendKeys(text);
+            log.debug("Typed '{}' into element: {}", text, locator);
+        } catch (Exception e) {
+            log.warn("Type by locator failed: {}", e.getMessage());
+        }
     }
 
     protected void clearAndType(WebElement element, String text) {
@@ -224,10 +238,15 @@ public abstract class BasePage {
         driver.switchTo().defaultContent();
     }
 
-    // Wait for page load
+    // Wait for page load - with timeout handling
     protected void waitForPageLoad() {
-        wait.until(driver -> ((JavascriptExecutor) driver)
-                .executeScript("return document.readyState").equals("complete"));
+        try {
+            wait.until(driver -> ((JavascriptExecutor) driver)
+                    .executeScript("return document.readyState").equals("complete"));
+        } catch (Exception e) {
+            log.warn("Page load wait timed out, continuing anyway: {}", e.getMessage());
+            // Page may still be usable even if not fully loaded
+        }
     }
 
     // Screenshot

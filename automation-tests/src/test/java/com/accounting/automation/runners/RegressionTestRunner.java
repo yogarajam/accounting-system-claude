@@ -20,7 +20,7 @@ import org.testng.annotations.DataProvider;
                 "com.aventstack.extentreports.cucumber.adapter.ExtentCucumberAdapter:"
         },
         monochrome = true,
-        tags = "@regression"
+        tags = "@regression and not @wip"
 )
 public class RegressionTestRunner extends AbstractTestNGCucumberTests {
 

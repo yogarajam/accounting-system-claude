@@ -2,6 +2,7 @@ package com.accounting.automation.pages;
 
 import com.accounting.automation.config.ConfigReader;
 import lombok.extern.slf4j.Slf4j;
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 
@@ -11,38 +12,44 @@ import org.openqa.selenium.support.FindBy;
 @Slf4j
 public class DashboardPage extends BasePage {
 
-    @FindBy(css = "h2, .page-title")
+    @FindBy(css = "h2")
     private WebElement pageTitle;
 
-    @FindBy(linkText = "Accounts")
+    // Sidebar navigation links
+    @FindBy(css = "a[href*='/accounts']")
     private WebElement accountsMenu;
 
-    @FindBy(linkText = "Journal")
+    @FindBy(css = "a[href*='/journal']")
     private WebElement journalMenu;
 
-    @FindBy(linkText = "Ledger")
+    @FindBy(css = "a[href*='/ledger']")
     private WebElement ledgerMenu;
 
-    @FindBy(linkText = "Invoices")
+    @FindBy(css = "a[href*='/invoices']")
     private WebElement invoicesMenu;
 
-    @FindBy(linkText = "Reports")
+    @FindBy(css = "a[href*='/reports']")
     private WebElement reportsMenu;
 
-    @FindBy(linkText = "Bank")
+    @FindBy(css = "a[href*='/bank']")
     private WebElement bankMenu;
 
-    @FindBy(css = "a[href*='logout']")
-    private WebElement logoutLink;
+    // Logout is in a dropdown form
+    @FindBy(css = "form[action*='logout'] button")
+    private WebElement logoutButton;
 
-    @FindBy(css = ".card-title:contains('Cash'), .widget-cash")
-    private WebElement cashWidget;
+    @FindBy(id = "navbarDropdown")
+    private WebElement userDropdown;
 
-    @FindBy(css = ".pending-entries, .card:contains('Pending')")
+    // Dashboard widgets
+    @FindBy(xpath = "//div[contains(text(),'Total Assets')]")
+    private WebElement totalAssetsWidget;
+
+    @FindBy(xpath = "//div[contains(text(),'Cash Balance')]")
+    private WebElement cashBalanceWidget;
+
+    @FindBy(xpath = "//div[contains(text(),'Pending Entries')]")
     private WebElement pendingEntriesWidget;
-
-    @FindBy(css = ".overdue-invoices, .card:contains('Overdue')")
-    private WebElement overdueInvoicesWidget;
 
     public DashboardPage() {
         super();
@@ -57,7 +64,22 @@ public class DashboardPage extends BasePage {
 
     public boolean isDashboardDisplayed() {
         waitForPageLoad();
-        return getCurrentUrl().contains("dashboard") || isDisplayed(pageTitle);
+        try {
+            // Check if we're on the dashboard by URL or page content
+            String url = getCurrentUrl();
+            if (url.contains("dashboard")) {
+                return true;
+            }
+            // Also check if page title contains Dashboard
+            if (isDisplayed(pageTitle) && getText(pageTitle).contains("Dashboard")) {
+                return true;
+            }
+            // Check for sidebar presence (indicates logged in)
+            return driver.findElements(By.id("sidebar-wrapper")).size() > 0;
+        } catch (Exception e) {
+            log.debug("Dashboard check failed: {}", e.getMessage());
+            return false;
+        }
     }
 
     public String getPageTitle() {
@@ -67,56 +89,76 @@ public class DashboardPage extends BasePage {
     // Navigation methods
     public AccountsPage navigateToAccounts() {
         click(accountsMenu);
+        waitForPageLoad();
         log.info("Navigated to Accounts page");
         return new AccountsPage();
     }
 
     public JournalPage navigateToJournal() {
         click(journalMenu);
+        waitForPageLoad();
         log.info("Navigated to Journal page");
         return new JournalPage();
     }
 
     public LedgerPage navigateToLedger() {
         click(ledgerMenu);
+        waitForPageLoad();
         log.info("Navigated to Ledger page");
         return new LedgerPage();
     }
 
     public InvoicesPage navigateToInvoices() {
         click(invoicesMenu);
+        waitForPageLoad();
         log.info("Navigated to Invoices page");
         return new InvoicesPage();
     }
 
     public ReportsPage navigateToReports() {
         click(reportsMenu);
+        waitForPageLoad();
         log.info("Navigated to Reports page");
         return new ReportsPage();
     }
 
     public BankPage navigateToBank() {
         click(bankMenu);
+        waitForPageLoad();
         log.info("Navigated to Bank page");
         return new BankPage();
     }
 
     public LoginPage logout() {
-        click(logoutLink);
+        click(userDropdown);
+        click(logoutButton);
+        waitForPageLoad();
         log.info("Logged out");
         return new LoginPage();
     }
 
     // Dashboard widget checks
-    public boolean isCashWidgetDisplayed() {
-        return isDisplayed(cashWidget);
+    public boolean isTotalAssetsWidgetDisplayed() {
+        try {
+            return isDisplayed(totalAssetsWidget);
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    public boolean isCashBalanceWidgetDisplayed() {
+        try {
+            return isDisplayed(cashBalanceWidget);
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     public boolean isPendingEntriesWidgetDisplayed() {
-        return isDisplayed(pendingEntriesWidget);
-    }
-
-    public boolean isOverdueInvoicesWidgetDisplayed() {
-        return isDisplayed(overdueInvoicesWidget);
+        try {
+            return isDisplayed(pendingEntriesWidget);
+        } catch (Exception e) {
+            return false;
+        }
     }
 }

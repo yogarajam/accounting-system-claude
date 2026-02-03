@@ -10,7 +10,7 @@ Feature: Login Functionality
   @positive
   Scenario: Successful login with valid credentials
     When I enter username "admin"
-    And I enter password "admin"
+    And I enter password "admin123"
     And I click the login button
     Then I should be redirected to the dashboard
 
@@ -42,10 +42,9 @@ Feature: Login Functionality
     Then I should see an error message
     And I should remain on the login page
 
+    # Note: Empty credentials won't submit due to HTML5 required validation
     Examples:
       | username    | password      |
       | admin       | wrongpass     |
-      | wronguser   | admin         |
+      | wronguser   | admin123      |
       | wronguser   | wrongpass     |
-      |             | admin         |
-      | admin       |               |
